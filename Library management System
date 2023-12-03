@@ -1,0 +1,170 @@
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Scanner;
+
+class Book {
+    private String bookId;
+    private String title;
+    private String author;
+    private boolean available;
+
+    public Book(String bookId, String title, String author) {
+        this.bookId = bookId;
+        this.title = title;
+        this.author = author;
+        this.available = true;
+    }
+
+    public String getBookId() {
+        return bookId;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public boolean isAvailable() {
+        return available;
+    }
+
+    public void setAvailable(boolean available) {
+        this.available = available;
+    }
+}
+
+class Library {
+    private Map<String, Book> books;
+
+    public Library() {
+        this.books = new HashMap<>();
+        initializeLibrary();
+    }
+
+    private void initializeLibrary() {
+        // Add sample books to the library
+        addBook(new Book("B001", "Introduction to Java", "John Doe"));
+        addBook(new Book("B002", "Database Management", "Jane Smith"));
+        // Add more books...
+    }
+
+    public void addBook(Book book) {
+        books.put(book.getBookId(), book);
+    }
+
+    public Book getBook(String bookId) {
+        return books.get(bookId);
+    }
+
+    public Map<String, Book> getAllBooks() {
+        return books;
+    }
+}
+
+class LibrarySystem {
+    private Library library;
+    private Scanner scanner;
+
+    public LibrarySystem() {
+        this.library = new Library();
+        this.scanner = new Scanner(System.in);
+    }
+
+    public void start() {
+        int choice;
+        do {
+            System.out.println("\nLibrary Management System");
+            System.out.println("1. View All Books");
+            System.out.println("2. Search for a Book");
+            System.out.println("3. Issue a Book");
+            System.out.println("4. Return a Book");
+            System.out.println("5. Exit");
+            System.out.print("Enter your choice: ");
+            choice = scanner.nextInt();
+
+            switch (choice) {
+                case 1:
+                    viewAllBooks();
+                    break;
+                case 2:
+                    searchForBook();
+                    break;
+                case 3:
+                    issueBook();
+                    break;
+                case 4:
+                    returnBook();
+                    break;
+                case 5:
+                    System.out.println("Exiting Library Management System. Goodbye!");
+                    break;
+                default:
+                    System.out.println("Invalid choice. Please enter a number between 1 and 5.");
+            }
+        } while (choice != 5);
+    }
+
+    private void viewAllBooks() {
+        System.out.println("\nAll Books in the Library:");
+        for (Book book : library.getAllBooks().values()) {
+            System.out.println("Book ID: " + book.getBookId() +
+                    ", Title: " + book.getTitle() +
+                    ", Author: " + book.getAuthor() +
+                    ", Availability: " + (book.isAvailable() ? "Available" : "Not Available"));
+        }
+    }
+
+    private void searchForBook() {
+        System.out.print("Enter the Book ID to search: ");
+        String bookId = scanner.next();
+        Book book = library.getBook(bookId);
+        if (book != null) {
+            System.out.println("Book Found:");
+            System.out.println("Book ID: " + book.getBookId() +
+                    ", Title: " + book.getTitle() +
+                    ", Author: " + book.getAuthor() +
+                    ", Availability: " + (book.isAvailable() ? "Available" : "Not Available"));
+        } else {
+            System.out.println("Book not found with ID: " + bookId);
+        }
+    }
+
+    private void issueBook() {
+        System.out.print("Enter the Book ID to issue: ");
+        String bookId = scanner.next();
+        Book book = library.getBook(bookId);
+        if (book != null && book.isAvailable()) {
+            System.out.println("Issuing the book: " + book.getTitle());
+            book.setAvailable(false);
+        } else if (book != null && !book.isAvailable()) {
+            System.out.println("Book with ID " + bookId + " is not available for issuance.");
+        } else {
+            System.out.println("Book not found with ID: " + bookId);
+        }
+    }
+
+    private void returnBook() {
+        System.out.print("Enter the Book ID to return: ");
+        String bookId = scanner.next();
+        Book book = library.getBook(bookId);
+        if (book != null && !book.isAvailable()) {
+            System.out.println("Returning the book: " + book.getTitle());
+            book.setAvailable(true);
+        } else if (book != null && book.isAvailable()) {
+            System.out.println("Book with ID " + bookId + " is already available. No need to return.");
+        } else {
+            System.out.println("Book not found with ID: " + bookId);
+        }
+    }
+}
+
+public class LibraryManagementSystem {
+    public static void main(String[] args) {
+        LibrarySystem librarySystem = new LibrarySystem();
+        librarySystem.start();
+    }
+}
+
